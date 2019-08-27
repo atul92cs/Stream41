@@ -1,4 +1,4 @@
-import { Socket } from "dgram";
+
 
 let peerConnections={};
 const Constrainsts={
@@ -6,7 +6,7 @@ const Constrainsts={
     video:true
 };
 navigator.mediaDevices.getUserMedia(Constrainsts).then((stream)=>{
-    video.srcObject=video;
+    video.srcObject=stream;
     socket.emit('broadcaster');
 }).catch(err=>{
    console.error(err);
