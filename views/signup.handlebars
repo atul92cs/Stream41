@@ -4,22 +4,22 @@
         {{success_messages}}
     </div>
     {{/if}}
-    {{#if error_messages}}
+    {{#if message}}
     <div class="alert-danger" role="alert">
-        {{error_messages}}
+        {{message}}
     </div>
     {{/if}}
 </div>
 <div class="form-section">
-    <form action="/user/register" method="POST">
+    <form action="/signup" method="POST">
        <div class="form-group">
-        <input type="email" #email name="email" placeholder="Email">
+        <input type="email" #email name="email" class="form-control" placeholder="Email">
        </div>
        <div class="form-group">
-           <input type="password" #password name="password" placeholder="Password">
+           <input type="password" #password name="password" class="form-control" placeholder="Password">
        </div>
        <div class="form-group text-center">
-           <button class="primary" type="submit">Signup</button>
+           <button class="btn btn-primary" type="submit">Signup</button>
        </div>
     </form>
 </div>
