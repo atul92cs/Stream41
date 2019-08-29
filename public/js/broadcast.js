@@ -1,41 +1,45 @@
 
 
-let peerConnections={};
-const Constrainsts={
-    audio:true,
-    video:true
+const peerConnections = {};
+
+/** @type {MediaStreamConstraints} */
+const constraints = {
+	// audio: true,
+	video: {facingMode: "user"}
 };
-navigator.mediaDevices.getUserMedia(Constrainsts).then((stream)=>{
-    video.srcObject=stream;
-    socket.emit('broadcaster');
-}).catch(err=>{
-   console.error(err);
+
+navigator.mediaDevices.getUserMedia(constraints)
+.then(function(stream) {
+	video.srcObject = stream;
+	socket.emit('broadcaster');
+}).catch(error => console.error(error));
+
+socket.on('answer', function(id, description) {
+	peerConnections[id].setRemoteDescription(description);
 });
 
-socket.on('answer',(id,description)=>{
-    peerConnections[id].setRemoteDescriptions(description);
+socket.on('watcher', function(id) {
+	const peerConnection = new RTCPeerConnection(config);
+	peerConnections[id] = peerConnection;
+	let stream = video.srcObject;
+        stream.getTracks().forEach(track => peerConnection.addTrack(track, stream));
+	peerConnection.createOffer()
+	.then(sdp => peerConnection.setLocalDescription(sdp))
+	.then(function () {
+		socket.emit('offer', id, peerConnection.localDescription);
+	});
+	peerConnection.onicecandidate = function(event) {
+		if (event.candidate) {
+			socket.emit('candidate', id, event.candidate);
+		}
+	};
 });
-socket.on('watcher',(id)=>{
-    const peerConnection=new RTCPeerConnection(config);
-    peerConnections[id]=peerConnection;
-    let stream=video.srcObject;
-    stream.getTracks().forEach(track=>{peerConnection.addTrack(track,stream)});
-    peerConnection.createOffer()
-    .then((sdp)=>{peerConnection.setLocalDescription(sdp)})
-    .then(()=>{
-        socket.emit('offer',id,peerConnection.localDescription);
-    });
-    peerConnection.onicecandidate=(event)=>{
-      if(event.candidate)
-      {
-          socket.emit('candidate',id,event.candidate);
-      }
-    };
+
+socket.on('candidate', function(id, candidate) {
+	peerConnections[id].addIceCandidate(new RTCIceCandidate(candidate));
 });
-socket.on('candidate',(id,candidate)=>{
-    peerConnections[id].addIceCandidate(new RTCIceCandidate(candidate));
-});
-socket.on('bye',(id)=>{
-    peerConnections[id] && peerConnections[id].close();
-    delete peerConnections[id];
+
+socket.on('bye', function(id) {
+	peerConnections[id] && peerConnections[id].close();
+	delete peerConnections[id];
 });

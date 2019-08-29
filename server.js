@@ -11,9 +11,10 @@ const app=express();
 const http=require('http').Server(app);
 const io=require('socket.io')(http);
 let broadcaster;
-app.engine('handlebars',exphbs({defaultLayout:'main'}));
+
 app.use(express.static(path.join(__dirname,'public')));
-app.set('view engine','handlebars');
+
+app.set('view engine','html');
 app.use(session({
     secret:'jackward',
     resave:true,
