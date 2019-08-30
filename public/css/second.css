@@ -1,0 +1,13 @@
+.form-section
+{
+    margin-left:75vh;
+    margin-right: 75vh;
+    margin-top: 35vh;
+    border: 1.5px black solid;
+    border-radius: 4.5px;
+    padding: 9px 9px 9px 9px;
+}
+.form-section h1 
+{
+    text-align: center;
+}
